@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#640d14">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2215%22%20fill%3D%22%23640d14%22%2F%3E%3Cpath%20d%3D%22M19%2025l3-9%208%205m15%204-3-9-8%205M20%2042c6-12%2013-18%2020-18%207%200%209%206%206%2012-3%207-9%209-13%205-3-4%200-9%205-11m2-5v17%22%20fill%3D%22none%22%20stroke%3D%22%23fdf0d5%22%20stroke-width%3D%223.1%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E">
+  <meta name="apple-mobile-web-app-title" content="ada.">
+  <meta name="description" content="Ada’nın çizimleri ve kedi fotoğrafları için galeri.">
+  <title>ada isim koyana kadar isim yok</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+  <!-- Supabase publishable key is loaded from supabase-config.js; no secret is in this page. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <style>
+    :root{--wine:#640d14;--wine-deep:#43070e;--wine-2:#7c1b24;--cream:#fdf0d5;--paper:#fff9ee;--ink:#351519;--sub:#80645d;--border:rgba(100,13,20,.16);--serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',system-ui,-apple-system,sans-serif;--shadow:0 20px 65px rgba(57,11,16,.15)}
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+    button,input,textarea,select{font:inherit}
+    button{cursor:pointer}
+    button:disabled{cursor:not-allowed;opacity:.5}
+    button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #c48952;outline-offset:3px}
+    [hidden]{display:none!important}
+    .svg-icon{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+    .app{min-height:100vh;background:radial-gradient(circle at 100% 5%,rgba(100,13,20,.035),transparent 28%),repeating-linear-gradient(0deg,transparent 0 51px,rgba(100,13,20,.012) 52px 53px),var(--cream)}
+    .shell{max-width:1260px;margin:0 auto;padding:0 clamp(18px,5vw,72px)}
+    .site-header{position:relative;z-index:5;border-bottom:1px solid var(--border)}
+    .head-inner{height:82px;display:flex;align-items:center;gap:16px}
+    .brand{display:inline-flex;align-items:center;gap:11px;text-decoration:none;color:var(--wine)}
+    .brand-mark{width:39px;height:39px;flex:none;display:grid;place-items:center;color:var(--wine)}
+    .brand-mark svg{display:block;width:100%;height:100%}
+    .brand-text{font-family:var(--serif);font-weight:600;font-size:30px;letter-spacing:-1.6px;line-height:1}.brand-caption{font-size:9px;letter-spacing:.15px;opacity:.72;font-weight:600;line-height:1.4;margin-left:1px;max-width:126px}
+    .header-note{font-size:10px;letter-spacing:2.1px;text-transform:uppercase;color:var(--sub);margin-left:10px;white-space:nowrap}
+    .header-spacer{flex:1}
+    .header-actions{display:flex;gap:8px;align-items:center}
+    .mode-btn,.icon-btn,.small-outline{background:none;color:var(--wine);border:1px solid var(--border);border-radius:100px;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:0 14px;font-size:12px;font-weight:700;white-space:nowrap;transition:background .2s,transform .2s}
+    .mode-btn:hover,.icon-btn:hover,.small-outline:hover{background:rgba(100,13,20,.055)}
+    .mode-btn .svg-icon{width:17px;height:17px}
+    .icon-btn{width:42px;padding:0}
+    .primary-btn{border:0;border-radius:100px;background:var(--wine);color:var(--cream);display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 21px;font-size:12px;font-weight:700;letter-spacing:.1px;min-height:44px;transition:transform .2s,background .2s,box-shadow .2s}
+    .primary-btn:hover{background:var(--wine-2);transform:translateY(-1px);box-shadow:0 9px 22px rgba(100,13,20,.18)}
+    .primary-btn:active{transform:translateY(0)}
+    .primary-btn .svg-icon{width:17px;height:17px}
+    .hero{padding-top:24px}
+    .hero-card{min-height:340px;border-radius:5px;background:var(--wine);color:var(--cream);overflow:hidden;position:relative;display:grid;grid-template-columns:1fr minmax(230px,.42fr);isolation:isolate}
+    .hero-card:after{content:'';inset:0;position:absolute;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(253,240,213,.016) 0 1px,transparent 1px 4px);mix-blend-mode:screen}
+    .hero-content{padding:clamp(32px,5.5vw,72px);position:relative;z-index:1}
+    .eyebrow{display:flex;align-items:center;gap:12px;font-size:10px;text-transform:uppercase;letter-spacing:2.8px;font-weight:700;opacity:.75}
+    .eyebrow .line{width:25px;height:1px;background:currentColor}
+    .hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(43px,5.4vw,76px);line-height:1.14;letter-spacing:-2.2px;margin:25px 0 20px;max-width:760px}
+    .hero h1 em{font-weight:400}
+    .hero-desc{max-width:340px;font-size:13px;line-height:1.9;color:rgba(253,240,213,.7);margin:0}
+    .hero-art{position:relative;display:grid;place-items:center;overflow:hidden;border-left:1px solid rgba(253,240,213,.09)}
+    .hero-art:before{content:'';position:absolute;width:360px;height:360px;border:1px solid rgba(253,240,213,.15);border-radius:50%}
+    .hero-art:after{content:'';position:absolute;width:245px;height:245px;border:1px solid rgba(253,240,213,.15);border-radius:50%}
+    .art-sun{position:absolute;width:350px;height:350px;opacity:.75;transform:rotate(-10deg)}
+    .hero-art small{position:absolute;bottom:28px;right:30px;font-size:10px;letter-spacing:2.5px;opacity:.5}
+    .underhero{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-top:22px;color:var(--sub);font-size:11px}
+    .underhero span{display:flex;align-items:center;gap:8px}
+    .underhero svg{color:var(--wine);width:16px;height:16px}
+    .section-heading{display:flex;align-items:end;justify-content:space-between;gap:24px;margin:66px 0 25px}
+    .kicker{margin:0 0 10px;color:var(--wine);font-size:10px;font-weight:700;letter-spacing:2.6px;text-transform:uppercase}
+    .section-heading h2{font-family:var(--serif);color:var(--wine);font-size:clamp(32px,4.2vw,48px);font-weight:400;line-height:1.2;letter-spacing:-1.3px;margin:0}
+    .count{font-size:12px;color:var(--sub);padding-bottom:7px;white-space:nowrap}
+    .toolbar{display:flex;align-items:center;gap:11px;justify-content:space-between;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:14px 0;margin-bottom:25px}
+    .search-wrap{position:relative;flex:1;max-width:420px}
+    .search-wrap .svg-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--wine);width:17px;height:17px}
+    .search{width:100%;border:1px solid transparent;background:rgba(255,255,255,.49);border-radius:100px;padding:12px 17px 12px 42px;color:var(--ink);font-size:12px;outline:none;transition:border .2s}
+    .search:focus{border-color:rgba(100,13,20,.35)}
+    .search::placeholder{color:#9e827b}
+    .sort{appearance:none;background:var(--cream);border:0;color:var(--wine);font-size:11px;font-weight:700;min-height:40px;padding:0 24px 0 7px;max-width:136px;outline:none;cursor:pointer}
+    .gallery{columns:4 220px;column-gap:18px;min-height:70px}
+    .art-card{break-inside:avoid;display:block;margin:0 0 18px;padding:9px;background:var(--paper);border:1px solid rgba(100,13,20,.08);box-shadow:0 6px 24px rgba(64,24,17,.055);transition:transform .23s,box-shadow .23s;cursor:pointer;position:relative;text-align:left;width:100%;color:inherit}
+    .art-card:hover{transform:translateY(-5px);box-shadow:0 16px 28px rgba(64,24,17,.13)}
+    .card-photo{display:block;background:#eadfc9;width:100%;object-fit:cover;aspect-ratio:var(--ratio,4/5);}
+    .card-bottom{display:flex;justify-content:space-between;gap:8px;align-items:flex-end;padding:16px 7px 8px}
+    .card-title{font-family:var(--serif);font-size:19px;line-height:1.3;color:var(--wine);font-weight:500;overflow-wrap:anywhere}
+    .card-date{font-size:10px;color:var(--sub);white-space:nowrap;margin-top:5px}.card-category{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--sub);margin-top:6px}
+    .card-arrow{color:var(--wine);flex:none;margin-bottom:2px;opacity:.6}
+    .card-arrow .svg-icon{width:17px;height:17px}
+    .empty{min-height:385px;background:rgba(255,249,238,.65);border:1px dashed rgba(100,13,20,.22);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:36px 18px;gap:8px}
+    .empty-icon{width:75px;height:75px;color:var(--wine);margin-bottom:8px}
+    .empty h3{font-family:var(--serif);font-size:29px;font-weight:400;color:var(--wine);margin:0}
+    .empty p{font-size:12px;max-width:300px;line-height:1.8;color:var(--sub);margin:0 0 14px}
+    .site-footer{margin-top:98px;background:var(--wine-deep);color:var(--cream)}
+    .footer-inner{min-height:168px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .footer-brand{font-family:var(--serif);font-size:38px;letter-spacing:-1.5px}
+    .footer-copy{font-size:11px;opacity:.62;line-height:1.8;max-width:290px;text-align:right}
+    /* Entry screen */
+    .entry{position:fixed;inset:0;z-index:100;background:var(--wine);color:var(--cream);overflow-y:auto;display:grid;place-items:center;padding:35px 20px;isolation:isolate}
+    .entry:before{content:'';position:absolute;inset:0;opacity:.14;pointer-events:none;background-image:radial-gradient(circle at 15% 20%,var(--cream) 1px,transparent 1.7px),radial-gradient(circle at 85% 75%,var(--cream) 1px,transparent 1.7px);background-size:63px 74px}
+    .entry:after{content:'';position:absolute;width:550px;height:550px;border:1px solid rgba(253,240,213,.09);border-radius:50%;top:-330px;right:-230px}
+    .entry-inner{width:min(100%,445px);position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center}
+    .entry-stamp{display:flex;align-items:center;justify-content:center;width:94px;height:94px;margin-bottom:25px;color:var(--cream)}.entry-stamp svg{width:100%;height:100%}
+    .entry-label{font-size:10px;text-transform:uppercase;letter-spacing:3.5px;opacity:.65;font-weight:700}
+    .entry h1{font-family:var(--serif);font-weight:400;font-size:clamp(45px,11vw,66px);line-height:1.12;letter-spacing:-2px;margin:12px 0 30px}
+    .entry h1 em{font-weight:400}
+    .entry-sub{font-size:13px;line-height:1.9;opacity:.68;margin:0 0 36px;max-width:300px}
+    .role-card{display:flex;align-items:center;text-align:left;gap:17px;width:100%;background:var(--cream);border:1px solid var(--cream);color:var(--wine);padding:19px 20px;margin-bottom:12px;min-height:93px;border-radius:2px;transition:transform .2s,background .2s}
+    .role-card:hover{transform:translateX(4px);background:#fff8e9}
+    .role-card.ghost{background:transparent;color:var(--cream);border-color:rgba(253,240,213,.36)}
+    .role-card.ghost:hover{background:rgba(253,240,213,.07)}
+    .role-icon{width:49px;height:49px;display:grid;place-items:center;flex:none;border:1px solid currentColor;border-radius:50%;opacity:.8}
+    .role-icon .svg-icon{width:25px;height:25px}
+    .role-text{flex:1;min-width:0}
+    .role-text strong{font-family:var(--serif);font-size:23px;font-weight:500;display:block;line-height:1.2}
+    .role-text small{font-size:11px;opacity:.7;display:block;margin-top:6px;line-height:1.4}
+    .role-arrow{align-self:center;opacity:.65}
+    .entry-foot{opacity:.46;font-size:10px;margin:22px 0 0;line-height:1.8}
+    /* Modals */
+    .overlay{position:fixed;inset:0;z-index:50;background:rgba(29,6,9,.77);backdrop-filter:blur(7px);display:flex;align-items:center;justify-content:center;padding:20px}
+    .modal{background:var(--cream);width:min(100%,540px);max-height:min(90dvh,900px);overflow-y:auto;box-shadow:var(--shadow);border-radius:5px;position:relative}
+    .modal-pad{padding:clamp(22px,5vw,39px)}
+    .modal-head{display:flex;align-items:start;justify-content:space-between;gap:15px;margin-bottom:20px}
+    .modal-title{font:400 37px/1.16 var(--serif);color:var(--wine);margin:4px 0}
+    .close-btn{border:1px solid var(--border);background:none;color:var(--wine);width:40px;height:40px;border-radius:50%;display:grid;place-items:center;flex:none}
+    .close-btn:hover{background:rgba(100,13,20,.07)}
+    .dropzone{border:1.5px dashed rgba(100,13,20,.29);min-height:178px;background:rgba(255,255,255,.4);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;cursor:pointer;padding:17px}
+    .dropzone.dragging{background:#f4dfc3;border-color:var(--wine)}
+    .dropzone .svg-icon{width:34px;height:34px;color:var(--wine);margin-bottom:10px}
+    .dropzone strong{color:var(--wine);font-size:13px}
+    .dropzone small{color:var(--sub);font-size:11px;margin-top:7px}
+    .dropzone img{max-width:100%;max-height:285px;object-fit:contain;display:block}
+    .change-photo{font-size:11px;font-weight:700;color:var(--wine);margin-top:11px;text-decoration:underline}
+    .field{margin-top:20px}
+    .field label{font-weight:700;font-size:11px;color:var(--wine);display:block;margin-bottom:9px}
+    .field input,.field textarea,.field select{background:rgba(255,255,255,.54);border:1px solid rgba(100,13,20,.18);border-radius:2px;display:block;width:100%;padding:13px 14px;font-size:13px;color:var(--ink);outline:none}
+    .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--wine)}
+    .field textarea{min-height:102px;resize:vertical;line-height:1.65}
+    .field input::placeholder,.field textarea::placeholder{color:#b09a93}
+    .date-hint{display:flex;align-items:center;gap:9px;font-size:11px;color:var(--sub);margin-top:19px}
+    .date-hint .svg-icon{width:16px;height:16px;color:var(--wine)}
+    .modal-actions{margin-top:25px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+    .danger-btn{border:0;background:none;color:#a72a2e;padding:11px 4px;font-size:11px;font-weight:700}
+    .danger-btn:hover{text-decoration:underline}
+    .modal-actions .primary-btn{margin-left:auto}
+    /* Keep the editor above the artwork detail when editing from a detail view. */
+    #editOverlay{z-index:80}
+    /* Details */
+    .detail-overlay{padding:25px}
+    .detail{width:min(1200px,100%);height:min(90dvh,770px);background:var(--cream);display:grid;grid-template-columns:minmax(0,1.45fr) minmax(305px,.75fr);box-shadow:var(--shadow);position:relative;overflow:hidden}
+    .detail-visual{background:#270b0d;min-height:0;display:flex;align-items:center;justify-content:center;position:relative;padding:45px;overflow:hidden}
+    .detail-visual img{max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 10px 20px rgba(0,0,0,.13));user-select:none}
+    .detail-visual .back-circle{position:absolute;inset:auto;aspect-ratio:1;width:75%;border:1px solid rgba(253,240,213,.08);border-radius:50%;pointer-events:none}
+    .detail-visual img{position:relative;z-index:1}
+    .detail-info{min-width:0;display:flex;flex-direction:column;padding:clamp(25px,4vw,55px);overflow-y:auto}
+    .detail-no{font-size:11px;letter-spacing:2.5px;color:var(--wine);font-weight:700}
+    .detail-title{font-family:var(--serif);font-size:clamp(34px,3.5vw,51px);font-weight:400;color:var(--wine);line-height:1.18;letter-spacing:-1.1px;margin:30px 0 24px;overflow-wrap:anywhere}
+    .detail-rule{width:46px;height:1px;background:var(--wine);opacity:.5}
+    .detail-desc{font-size:13px;line-height:2.0;color:#66524b;white-space:pre-wrap;margin:22px 0;overflow-wrap:anywhere}
+    .detail-meta{margin-top:auto;padding-top:30px;display:grid;gap:21px}
+    .detail-meta dt{font-size:10px;letter-spacing:1.7px;color:#92736c;font-weight:700;text-transform:uppercase;margin-bottom:7px}
+    .detail-meta dd{font-family:var(--serif);color:var(--wine);font-size:18px;margin:0}
+    .detail-info-actions{display:flex;gap:9px;align-items:center;margin-top:30px;flex-wrap:wrap}
+    .detail-close{position:absolute;top:17px;right:17px;z-index:3;background:var(--paper)}
+    .nav-pair{position:absolute;z-index:2;bottom:21px;left:20px;display:flex;gap:7px}
+    .nav-btn{width:42px;height:42px;border-radius:50%;border:1px solid rgba(253,240,213,.4);background:rgba(0,0,0,.23);color:var(--cream);display:grid;place-items:center}
+    .nav-btn:hover{background:rgba(253,240,213,.14)}
+    .nav-btn:disabled{opacity:.27}
+    .backup-info{font-size:12px;line-height:1.85;color:var(--sub);margin:0 0 22px}
+    .backup-card{background:var(--paper);border:1px solid var(--border);padding:18px;margin:12px 0;display:flex;gap:14px;align-items:flex-start}
+    .backup-card .svg-icon{width:25px;height:25px;color:var(--wine)}
+    .backup-card strong{font-family:var(--serif);font-size:19px;color:var(--wine);font-weight:500}
+    .backup-card p{font-size:11px;line-height:1.7;color:var(--sub);margin:6px 0 13px}
+    .backup-card .small-outline{min-height:36px}
+    .backup-note{font-size:11px;line-height:1.8;color:var(--sub);border-top:1px solid var(--border);margin-top:22px;padding-top:15px}
+    .toast{position:fixed;z-index:200;bottom:calc(25px + env(safe-area-inset-bottom));left:50%;transform:translate(-50%,20px);background:var(--wine-deep);color:var(--cream);padding:13px 20px;border:1px solid rgba(253,240,213,.3);box-shadow:0 12px 40px rgba(0,0,0,.2);border-radius:4px;min-width:210px;max-width:calc(100vw - 32px);text-align:center;font-size:12px;line-height:1.5;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s}
+    .toast.visible{opacity:1;transform:translate(-50%,0)}
+    body.locked{overflow:hidden}
+    @media(max-width:850px){.header-note{display:none}.hero-card{grid-template-columns:1fr .32fr}.hero-art{opacity:.8}.hero-content{padding:42px}.hero h1{font-size:53px}.hero-art:before{width:280px;height:280px}.hero-art:after{width:200px;height:200px}.art-sun{width:280px;height:280px}.gallery{columns:3 180px}}
+    @media(max-width:680px){.head-inner{height:69px}.brand-text{font-size:27px}.brand-mark{width:31px;height:31px}.mode-btn{padding:0 11px;min-height:39px}.mode-btn .svg-icon{display:none}.header-actions .primary-btn{padding:10px 13px;min-height:39px}.header-actions .primary-btn span{display:none}.icon-btn{min-height:39px;width:39px}.hero{padding-top:16px}.hero-card{grid-template-columns:1fr;min-height:325px}.hero-content{padding:36px 27px 49px}.hero h1{font-size:clamp(43px,10.5vw,59px);line-height:1.13;position:relative;z-index:1;margin-top:32px;max-width:430px}.hero-desc{position:relative;z-index:1;font-size:12px;max-width:270px}.hero-art{position:absolute;right:-123px;top:5px;bottom:0;width:280px;border:0;opacity:.22;pointer-events:none}.hero-art small{display:none}.underhero{padding-top:16px;font-size:10px}.section-heading{margin:55px 0 20px}.section-heading h2{font-size:36px}.gallery{columns:2;column-gap:11px}.art-card{margin-bottom:11px;padding:6px}.card-bottom{padding:11px 4px 5px;gap:4px}.card-title{font-size:16px}.card-date{font-size:9px}.card-arrow{display:none}.toolbar{margin-bottom:15px}.search{font-size:11px}.detail-overlay{padding:0}.detail{width:100%;height:100dvh;display:flex;flex-direction:column;overflow-y:auto}.detail-visual{flex:none;height:min(59dvh,570px);padding:54px 20px 20px}.detail-info{flex:1;overflow:visible;padding:26px 25px max(38px,env(safe-area-inset-bottom))}.detail-title{font-size:39px;margin:17px 0 19px}.detail-desc{margin-top:15px}.detail-meta{padding-top:10px;gap:14px}.detail-close{background:var(--cream);right:16px;top:15px}.nav-pair{left:14px;bottom:14px}.nav-btn{width:37px;height:37px}.overlay:not(.detail-overlay){padding:0;align-items:flex-end}.modal{max-height:94dvh;width:100%;border-radius:15px 15px 0 0;padding-bottom:env(safe-area-inset-bottom)}.modal-title{font-size:31px}.footer-inner{padding-top:32px;padding-bottom:32px;min-height:130px}.footer-brand{font-size:33px}.footer-copy{font-size:10px}}
+    @media(max-width:370px){.head-inner{gap:7px}.header-actions{gap:5px}.mode-btn{padding:0 9px;font-size:11px}.brand{gap:6px}.hero-content{padding:33px 23px}.hero h1{font-size:41px}.count{font-size:10px}.sort{max-width:112px;font-size:10px}.card-title{font-size:15px}.entry h1{font-size:44px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+
+    /* Compact content navigation */
+    .collection-tabs{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 17px}
+    .tab-btn{border:1px solid var(--border);background:rgba(255,249,238,.48);color:var(--wine);border-radius:100px;min-height:41px;padding:0 18px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:8px;transition:background .2s,color .2s}
+    .tab-btn.active{background:var(--wine);color:var(--cream);border-color:var(--wine)}
+    .tab-btn .svg-icon{width:16px;height:16px}
+    .tab-count{font-size:10px;opacity:.68}
+    .filter-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+    .filter-btn{background:transparent;border:1px solid var(--border);border-radius:100px;padding:8px 15px;min-height:35px;color:var(--sub);font-size:11px;font-weight:700}
+    .filter-btn.active{background:var(--paper);color:var(--wine);border-color:rgba(100,13,20,.55)}
+    .art-card{overflow:hidden}
+    .card-open{width:100%;display:block;border:0;background:none;text-align:left;padding:0;color:inherit;cursor:pointer}
+    .card-open:focus-visible{outline:3px solid #b8824d;outline-offset:-3px}
+    .favorite-btn{position:absolute;top:17px;right:17px;z-index:2;display:grid;place-items:center;width:38px;height:38px;background:rgba(253,240,213,.91);backdrop-filter:blur(8px);color:var(--wine);border:1px solid rgba(100,13,20,.12);border-radius:50%;box-shadow:0 4px 18px rgba(0,0,0,.12);transition:transform .16s,background .16s}
+    .favorite-btn:hover{transform:scale(1.08);background:var(--cream)}
+    .favorite-btn .svg-icon{width:19px;height:19px}
+    .favorite-btn.active .svg-icon,.detail-favorite.active .svg-icon{fill:currentColor}
+    .detail-tag{margin:16px 0 0;color:var(--sub);font-size:11px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase}
+    .detail-favorite.active{background:var(--wine);color:var(--cream);border-color:var(--wine)}
+    /* App-styled confirmation dialog. */
+    #deleteOverlay{z-index:120}
+    .confirm-modal{width:min(100%,405px);padding:37px 34px;text-align:center}
+    .confirm-emblem{margin:0 auto 19px;width:59px;height:59px;border-radius:50%;border:1px solid rgba(100,13,20,.23);display:grid;place-items:center;color:var(--wine)}
+    .confirm-emblem .svg-icon{width:27px;height:27px}
+    .confirm-modal h2{font:400 34px/1.2 var(--serif);color:var(--wine);margin:0 0 11px}
+    .confirm-modal p{font-size:13px;line-height:1.65;color:var(--sub);margin:0 0 25px;overflow-wrap:anywhere}
+    .confirm-actions{display:flex;gap:10px;justify-content:center}
+    .confirm-actions button{flex:1;min-height:45px}
+    .confirm-delete{background:var(--wine);border:0;border-radius:100px;color:var(--cream);font-size:12px;font-weight:700;padding:10px}
+    .confirm-delete:disabled{opacity:.6}
+    @media(max-width:680px){.brand-caption{max-width:92px;font-size:8px}.brand-mark{width:34px;height:34px}.favorite-btn{top:12px;right:12px;width:34px;height:34px}.collection-tabs{margin-bottom:13px}.tab-btn{flex:1;justify-content:center}.filter-line{gap:6px}.filter-btn{padding:8px 12px}.confirm-modal{width:calc(100% - 28px);margin:auto;border-radius:7px;padding:35px 25px}}
+    @media(max-width:370px){.brand-caption{display:none}}
+  </style>
+</head>
+<body>
+  <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.7-7 10-7 10 7 10 7-3.7 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-up-right" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="i-locket" viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="m8 8 4 4 4-4M12 12v4"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m3 17 5.5-5 3.5 3 3-3L21 18"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="i-chevron-l" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+    <symbol id="i-chevron-r" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M4 17v3h16v-3"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4m-4 4 4-4 4 4M4 17v3h16v-3"/></symbol>
+    <symbol id="i-pencil" viewBox="0 0 24 24"><path d="m4 20 4.5-1 11-11a2.1 2.1 0 0 0-3-3l-11 11L4 20Zm10-13 3 3"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M3 7h18v13H3zM2 4h20v3H2zM10 12h4"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.5 8.5c0 4.5-8.5 10-8.5 10s-8.5-5.5-8.5-10a4.5 4.5 0 0 1 8.5-2 4.5 4.5 0 0 1 8.5 2Z"/></symbol>
+  </svg>
+  <div class="entry" id="entry" hidden>
+    <div class="entry-inner">
+      <div class="entry-stamp"><svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="6" y="6" width="52" height="52" rx="16" stroke="currentColor" stroke-width="1.6"/><path d="M19 25 22 16l8 5M45 25l-3-9-8 5" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 42c6-12 13-18 20-18 7 0 9 6 6 12-3 7-9 9-13 5-3-4 0-9 5-11M40 25v17" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h1>ada.</h1>
+      <div class="entry-label" style="margin:-18px 0 36px;letter-spacing:1.3px;text-transform:none;opacity:.75">isim koyana kadar isim yok</div>
+      <button class="role-card" data-enter="viewer"><span class="role-icon"><svg class="svg-icon"><use href="#i-eye"/></svg></span><span class="role-text"><strong>İzleyici</strong></span><svg class="svg-icon role-arrow"><use href="#i-arrow"/></svg></button>
+      <button class="role-card ghost" data-enter="curator"><span class="role-icon"><svg class="svg-icon"><use href="#i-pencil"/></svg></span><span class="role-text"><strong>Ekleyici</strong></span><svg class="svg-icon role-arrow"><use href="#i-arrow"/></svg></button>
+      <button class="small-outline" id="signOut" hidden style="margin-top:12px;color:var(--cream);border-color:rgba(253,240,213,.45)">Ekleyici oturumundan çık</button>
+    </div>
+  </div>
+    <div class="app" id="app">
+    <header class="site-header"><div class="shell head-inner">
+      <a class="brand" href="#top" aria-label="Ada ana sayfa"><span class="brand-mark"><svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="6" y="6" width="52" height="52" rx="16" stroke="currentColor" stroke-width="1.6"/><path d="M19 25 22 16l8 5M45 25l-3-9-8 5" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 42c6-12 13-18 20-18 7 0 9 6 6 12-3 7-9 9-13 5-3-4 0-9 5-11M40 25v17" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="brand-text">ada.</span><span class="brand-caption">isim koyana kadar<br>isim yok</span></a>
+      
+      <div class="header-spacer"></div>
+      <div class="header-actions">
+        <button class="mode-btn" id="switchMode" title="Mod değiştir"><svg class="svg-icon"><use href="#i-eye"/></svg><span id="modeLabel">İzleyici</span></button>
+        <button class="icon-btn" id="backupOpen" title="Yedekleme ve geri yükleme" aria-label="Yedekleme ve geri yükleme" hidden><svg class="svg-icon"><use href="#i-box"/></svg></button>
+        <button class="primary-btn" id="addOpen" hidden><svg class="svg-icon"><use href="#i-plus"/></svg><span>Resim ekle</span></button>
+      </div>
+    </div></header>
+    <main id="top"><div class="shell">
+      <section class="hero" aria-label="Galeri girişi"><div class="hero-card">
+        <div class="hero-content"><div class="eyebrow"><span class="line"></span>ADA’NIN GALERİSİ</div><h1>Çizimler.<br><em>Kediler.</em></h1></div>
+        <div class="hero-art" aria-hidden="true"><svg class="art-sun" viewBox="0 0 360 360" fill="none" stroke="#fdf0d5" stroke-width=".75"><circle cx="180" cy="180" r="91"/><ellipse cx="180" cy="180" rx="45" ry="132" transform="rotate(39 180 180)"/><ellipse cx="180" cy="180" rx="45" ry="132" transform="rotate(-39 180 180)"/><path d="M180 29v40m0 222v40M29 180h40m222 0h40M73 73l28 28m158 158 28 28M287 73l-28 28M101 259l-28 28"/><circle cx="180" cy="180" r="15"/></svg></div>
+      </div></section>
+      <div class="underhero"><span>Resim galerisi</span><span id="heroCount">00 RESİM</span></div>
+      <section aria-labelledby="worksTitle"><div class="section-heading"><div><div class="kicker">GALERİ</div><h2 id="worksTitle">Resimler</h2></div><span class="count" id="galleryCount">0 resim</span></div>
+      <div class="collection-tabs" role="group" aria-label="Galeri sekmeleri"><button class="tab-btn active" id="tabAll" data-tab="all" aria-pressed="true">Tüm resimler <span class="tab-count" id="allCount">0</span></button><button class="tab-btn" id="tabFavorites" data-tab="favorites" aria-pressed="false"><svg class="svg-icon"><use href="#i-heart"/></svg>Favoriler <span class="tab-count" id="favoritesCount">0</span></button></div>
+      <div class="filter-line" role="group" aria-label="Kategori"><button class="filter-btn active" data-category="all" aria-pressed="true">Tümü</button><button class="filter-btn" data-category="drawings" aria-pressed="false">Çizimler</button><button class="filter-btn" data-category="cats" aria-pressed="false">Kedi</button></div>
+      <div class="toolbar"><label class="search-wrap"><svg class="svg-icon"><use href="#i-search"/></svg><input type="search" id="search" class="search" placeholder="Resim ara…" aria-label="Resim ara"></label><select class="sort" id="sort" aria-label="Sıralama"><option value="new">En yeni</option><option value="old">En eski</option><option value="az">A → Z</option></select></div>
+      <div class="gallery" id="gallery"></div>
+      <div class="empty" id="empty"><svg class="empty-icon svg-icon" viewBox="0 0 80 80"><rect x="8" y="12" width="64" height="56" rx="2"/><circle cx="28" cy="29" r="6"/><path d="m9 56 18-17 14 12 12-13 18 18M22 75h36"/></svg><h3 id="emptyTitle">Henüz resim yok.</h3><p id="emptyText" hidden></p><button class="primary-btn" id="retryLoad" hidden>Yeniden dene</button><button class="primary-btn" id="emptyAdd" hidden><svg class="svg-icon"><use href="#i-plus"/></svg>Resim ekle</button></div>
+      </section></div></main>
+    <footer class="site-footer"><div class="shell footer-inner"><div class="footer-brand">ada.</div><div class="footer-copy">isim koyana kadar isim yok</div></div></footer>
+  </div>
+  <div class="overlay" id="editOverlay" role="presentation" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="editTitle"><div class="modal-pad">
+    <div class="modal-head"><div><div class="kicker" id="editKicker">RESİM EKLE</div><h2 class="modal-title" id="editTitle">Yeni resim</h2></div><button class="close-btn" id="editClose" title="Kapat" aria-label="Kapat"><svg class="svg-icon"><use href="#i-x"/></svg></button></div>
+    <form id="artForm"><div id="dropzone" class="dropzone" role="button" tabindex="0" aria-label="Görsel seç"><div id="dropPrompt"><svg class="svg-icon"><use href="#i-image"/></svg><strong>Resmi buraya ekle</strong><small>Dokunarak seç veya buraya sürükle</small><small>Orijinal görsel saklanır · JPG, PNG, WEBP</small></div><img id="imagePreview" alt="Eklenecek resmin önizlemesi" hidden><span class="change-photo" id="changePhoto" hidden>Fotoğrafı değiştir</span></div><input type="file" id="artFile" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" hidden>
+    <div class="field"><label for="artTitle">RESMİN ADI <span aria-hidden="true">*</span></label><input id="artTitle" maxlength="100" required placeholder="Resmin adı" autocomplete="off"></div>
+    <div class="field"><label for="artCategory">KATEGORİ</label><select id="artCategory" required><option value="drawings">Çizimler</option><option value="cats">Kedi</option></select></div>
+    <div class="field"><label for="artDesc">AÇIKLAMA (İSTEĞE BAĞLI)</label><textarea id="artDesc" maxlength="3000" placeholder="Açıklama ekle…"></textarea></div>
+    <div class="date-hint"><svg class="svg-icon"><use href="#i-calendar"/></svg><span id="dateHint">Eklenme tarihi otomatik kaydedilecek.</span></div>
+    <div class="modal-actions"><button type="button" class="danger-btn" id="deleteArt" hidden>Resmi sil</button><button type="submit" class="primary-btn" id="saveBtn"><svg class="svg-icon"><use href="#i-heart"/></svg><span id="saveLabel">Resmi ekle</span></button></div>
+    </form></div></section></div>
+  <div class="overlay detail-overlay" id="detailOverlay" role="presentation" hidden><section class="detail" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><div class="detail-visual" id="detailVisual"><div class="back-circle"></div><img id="detailImage" alt=""><div class="nav-pair"><button class="nav-btn" id="prevArt" aria-label="Önceki resim"><svg class="svg-icon"><use href="#i-chevron-l"/></svg></button><button class="nav-btn" id="nextArt" aria-label="Sonraki resim"><svg class="svg-icon"><use href="#i-chevron-r"/></svg></button></div></div><div class="detail-info"><span class="detail-no" id="detailNumber">RESİM 001</span><h2 class="detail-title" id="detailTitle"></h2><div class="detail-tag" id="detailCategory"></div><div class="detail-rule"></div><p class="detail-desc" id="detailDesc"></p><dl class="detail-meta"><div><dt>Eklenme tarihi</dt><dd id="detailDate"></dd></div></dl><div class="detail-info-actions"><button class="small-outline detail-favorite" id="detailFavorite" aria-pressed="false"><svg class="svg-icon"><use href="#i-heart"/></svg><span id="detailFavoriteLabel">Favoriye ekle</span></button><button class="small-outline" id="downloadOriginal"><svg class="svg-icon"><use href="#i-download"/></svg>İndir</button><button class="small-outline" id="editFromDetail" hidden><svg class="svg-icon"><use href="#i-pencil"/></svg>Düzenle</button></div></div><button class="close-btn detail-close" id="detailClose" aria-label="Kapat"><svg class="svg-icon"><use href="#i-x"/></svg></button></section></div>
+  <div class="overlay" id="backupOverlay" role="presentation" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="backupTitle"><div class="modal-pad"><div class="modal-head"><div><div class="kicker">YEDEK</div><h2 class="modal-title" id="backupTitle">Yedekleme.</h2></div><button class="close-btn" id="backupClose" aria-label="Kapat"><svg class="svg-icon"><use href="#i-x"/></svg></button></div><p class="backup-info">Resimler şimdilik yalnızca bu tarayıcıda kayıtlıdır. ZIP yedeği alabilirsin.</p>
+    <div class="backup-card"><svg class="svg-icon"><use href="#i-download"/></svg><div><strong>Resimleri indir</strong><p>Resimler ve bilgileri ZIP dosyasına kaydedilir.</p><button class="small-outline" id="exportBackup">ZIP yedeği oluştur</button></div></div>
+    <div class="backup-card"><svg class="svg-icon"><use href="#i-upload"/></svg><div><strong>Yedeği yükle</strong><p>ZIP yedeğini ortak galeriye ekler. Aynı arşiv kimliği iki kez yüklenmez.</p><button class="small-outline" id="importBackupBtn">ZIP dosyası seç</button><input id="importBackupFile" type="file" accept=".zip,application/zip" hidden></div></div>
+    <div class="backup-card"><svg class="svg-icon"><use href="#i-upload"/></svg><div><strong>Bu cihazdakileri buluta aktar</strong><p>Eski izler-gallery-1 yerel koleksiyonunu bir kez güvenle taşır. Önce ZIP yedeği alman önerilir.</p><button class="small-outline" id="migrateLocalBtn">Yerel resimleri aktar</button></div></div>
+    <div class="backup-note">Resimler Supabase Storage’da, bilgiler PostgreSQL’de tutulur. Ekleyici yetkisi sunucuda doğrulanır.</div>
+  </div></section></div>
+  <div class="overlay" id="authOverlay" role="presentation" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="authTitle"><div class="modal-pad"><div class="modal-head"><div><div class="kicker">EKLEYİCİ GİRİŞİ</div><h2 class="modal-title" id="authTitle">Hoş geldin.</h2></div><button class="close-btn" id="authClose" aria-label="Kapat"><svg class="svg-icon"><use href="#i-x"/></svg></button></div><p class="backup-info" id="authMessage">Resim eklemek ve düzenlemek için yetkili hesabınla giriş yap.</p><form id="authForm"><div class="field"><label for="authEmail">E-POSTA</label><input id="authEmail" type="email" autocomplete="email" required></div><div class="field"><label for="authPassword">PAROLA</label><input id="authPassword" type="password" autocomplete="current-password" required></div><div class="modal-actions"><button type="submit" class="primary-btn"><span id="authSubmitLabel">Giriş yap</span></button></div></form></div></section></div>
+  <div class="overlay" id="deleteOverlay" hidden><section class="modal confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="deleteTitle" aria-describedby="deleteMessage"><div class="confirm-emblem"><svg class="svg-icon"><use href="#i-box"/></svg></div><h2 id="deleteTitle">Resmi sil?</h2><p id="deleteMessage"></p><div class="confirm-actions"><button class="small-outline" id="cancelDelete">Vazgeç</button><button class="confirm-delete" id="confirmDelete">Resmi sil</button></div></section></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const DB_NAME = 'izler-gallery-1', STORE = 'artworks'; // Keep existing IndexedDB data
+  let db, artworks = [], visible = [], mode = null, currentId = null, editingId = null, incomingFile = null, previewURL = null, detailURL = null, cardURLs = [], busy = false, toastTimer;
+  let lastFocus = null, activeTab = 'all', activeCategory = 'all', favorites = new Set();
+  const FAVORITES_KEY = 'ada-gallery-favorites-v1', ROLE_KEY = 'ada-gallery-role-v1';
+  const categoryName = key => key === 'cats' ? 'Kedi' : 'Çizimler';
+  function saveFavorites(){try{localStorage.setItem(FAVORITES_KEY,JSON.stringify([...favorites]))}catch{notify('Favori kaydedilemedi.')}}
+  function toggleFavorite(archiveId){if(favorites.has(archiveId))favorites.delete(archiveId);else favorites.add(archiveId);saveFavorites();render();if(currentId!==null&&!$('detailOverlay').hidden){const item=artworks.find(a=>a.id===currentId);if(item)updateFavoriteDetail(item)}}
+  function updateFavoriteDetail(a){const f=favorites.has(a.archiveId);$('detailFavorite').classList.toggle('active',f);$('detailFavorite').setAttribute('aria-pressed',String(f));$('detailFavoriteLabel').textContent=f?'Favorilerden çıkar':'Favoriye ekle'}
+  const icon = name => `<svg class="svg-icon"><use href="#i-${name}"></use></svg>`;
+  const dateDisplay = iso => new Intl.DateTimeFormat('tr-TR',{day:'numeric',month:'long',year:'numeric'}).format(new Date(iso));
+  const compactDate = iso => new Intl.DateTimeFormat('tr-TR',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(iso));
+  const dateFile = () => new Date().toISOString().slice(0,10);
+  const pad = n => String(n).padStart(2,'0');
+  const newKey = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now()+'-'+Math.random().toString(36).slice(2));
+  const fixName = value => String(value || '').replace(/[\\/<>:"|?*\x00-\x1f]/g,'_').trim() || 'resim';
+  const allowedTypes = new Set(['image/png','image/jpeg','image/webp','image/gif','image/avif']);
+  function notify(message){const t=$('toast');t.textContent=message;t.classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('visible'),3600)}
+  function setLock(){document.body.classList.toggle('locked',!$('entry').hidden || !$('editOverlay').hidden || !$('detailOverlay').hidden || !$('backupOverlay').hidden || !$('deleteOverlay').hidden)}
+  function overlayOpen(id){lastFocus=document.activeElement;$(id).hidden=false;setLock();const target=$(id).querySelector('button');if(target)target.focus({preventScroll:true})}
+  function overlayClose(id){$(id).hidden=true;setLock();if(lastFocus && lastFocus.isConnected)lastFocus.focus({preventScroll:true})}
+  async function openDb(){return new Promise((resolve,reject)=>{const req=indexedDB.open(DB_NAME,1);req.onupgradeneeded=()=>{const s=req.result.createObjectStore(STORE,{keyPath:'id',autoIncrement:true});s.createIndex('archiveId','archiveId',{unique:true})};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
+  function dbGetAll(){return new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readonly'),req=tx.objectStore(STORE).getAll();req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
+  function dbAdd(item){return new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite');const req=tx.objectStore(STORE).add(item);req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(tx.error||req.error)})}
+  function dbPut(item){return new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite');const req=tx.objectStore(STORE).put(item);req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(tx.error||req.error)})}
+  function dbDelete(id){return new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite');const req=tx.objectStore(STORE).delete(id);req.onsuccess=()=>resolve();req.onerror=()=>reject(tx.error||req.error)})}
+  function setMode(next){mode=next;try{localStorage.setItem(ROLE_KEY,next)}catch{}$('entry').hidden=true;$('switchMode').innerHTML=icon(mode==='curator'?'pencil':'eye')+`<span id="modeLabel">${mode==='curator'?'Ekleyici':'İzleyici'}</span>`;$('addOpen').hidden=mode!=='curator';$('backupOpen').hidden=mode!=='curator';$('editFromDetail').hidden=mode!=='curator';render();setLock();window.scrollTo({top:0,behavior:'auto'})}
+  function getVisible(){const q=$('search').value.trim().toLocaleLowerCase('tr');const selected=$('sort').value;let found=artworks.filter(a=>(activeTab!=='favorites'||favorites.has(a.archiveId))&&(activeCategory==='all'||(a.category||'drawings')===activeCategory)&&(!q||(a.title+' '+(a.description||'')).toLocaleLowerCase('tr').includes(q)));if(selected==='new')found.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)||b.id-a.id);else if(selected==='old')found.sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt)||a.id-b.id);else found.sort((a,b)=>a.title.localeCompare(b.title,'tr'));return found}
+    function revokeCards(){cardURLs.forEach(url=>URL.revokeObjectURL(url));cardURLs=[]}
+  function render(){revokeCards();visible=getVisible();const gallery=$('gallery');gallery.replaceChildren();$('galleryCount').textContent=`${visible.length} resim`;$('heroCount').textContent=`${pad(artworks.length)} RESİM`;
+    $('allCount').textContent=String(artworks.length);$('favoritesCount').textContent=String(artworks.filter(a=>favorites.has(a.archiveId)).length);
+    document.querySelectorAll('[data-tab]').forEach(btn=>{const on=btn.dataset.tab===activeTab;btn.classList.toggle('active',on);btn.setAttribute('aria-pressed',String(on))});
+    document.querySelectorAll('[data-category]').forEach(btn=>{const on=btn.dataset.category===activeCategory;btn.classList.toggle('active',on);btn.setAttribute('aria-pressed',String(on))});
+    const noArt=artworks.length===0, noMatches=visible.length===0;
+    $('empty').hidden=!noMatches;$('emptyTitle').textContent=noArt?'Henüz resim yok.':activeTab==='favorites'?'Favori resim yok.':'Resim bulunamadı.';
+    $('emptyText').hidden=true;$('emptyAdd').hidden=!noArt || mode!=='curator';
+    const frag=document.createDocumentFragment();
+    visible.forEach(a=>{const card=document.createElement('article');card.className='art-card';const open=document.createElement('button');open.type='button';open.className='card-open';open.setAttribute('aria-label',`${a.title} resmini görüntüle`);const img=document.createElement('img');img.className='card-photo';img.loading='lazy';img.decoding='async';img.alt=a.title;img.style.setProperty('--ratio',a.ratio?String(Math.max(.62,Math.min(1.6,a.ratio))):'0.8');const url=URL.createObjectURL(a.thumb||a.original);cardURLs.push(url);img.src=url;
+      const bottom=document.createElement('div');bottom.className='card-bottom';const meta=document.createElement('div');const title=document.createElement('div');title.className='card-title';title.textContent=a.title;const date=document.createElement('div');date.className='card-date';date.textContent=compactDate(a.createdAt);const category=document.createElement('div');category.className='card-category';category.textContent=categoryName(a.category);meta.append(title,date,category);const arrow=document.createElement('span');arrow.className='card-arrow';arrow.innerHTML=icon('up-right');bottom.append(meta,arrow);open.append(img,bottom);open.addEventListener('click',()=>openDetail(a.id));
+      const fav=document.createElement('button');fav.type='button';fav.className='favorite-btn';const active=favorites.has(a.archiveId);fav.classList.toggle('active',active);fav.setAttribute('aria-label',active?'Favorilerden çıkar':'Favoriye ekle');fav.setAttribute('aria-pressed',String(active));fav.innerHTML=icon('heart');fav.addEventListener('click',()=>toggleFavorite(a.archiveId));card.append(open,fav);frag.appendChild(card)});gallery.appendChild(frag)
+  }
+    async function reload(){artworks=await dbGetAll();render()}
+  function releasePreview(){if(previewURL){URL.revokeObjectURL(previewURL);previewURL=null}}
+  function updatePreview(blob){releasePreview();if(blob){previewURL=URL.createObjectURL(blob);$('imagePreview').src=previewURL;$('imagePreview').hidden=false;$('dropPrompt').hidden=true;$('changePhoto').hidden=false}else{$('imagePreview').removeAttribute('src');$('imagePreview').hidden=true;$('dropPrompt').hidden=false;$('changePhoto').hidden=true}}
+  function assignFile(file){if(!file)return;if(!allowedTypes.has(file.type)){notify('JPG, PNG, WEBP, GIF veya AVIF görsel seç.');return}if(file.size>70*1024*1024){notify('Bu dosya 70 MB sınırını aşıyor.');return}incomingFile=file;updatePreview(file);if(!editingId && !$('artTitle').value.trim())$('artTitle').value=file.name.replace(/\.[^/.]+$/,'').replace(/[_-]/g,' ').slice(0,100)}
+  function openEdit(id=null){if(mode!=='curator')return;editingId=id;incomingFile=null;$('artForm').reset();const a=id?artworks.find(x=>x.id===id):null;$('editKicker').textContent=a?'RESMİ DÜZENLE':'RESİM EKLE';$('editTitle').textContent=a?'Resmi düzenle':'Yeni resim';$('deleteArt').hidden=!a;$('saveLabel').textContent=a?'Kaydet':'Resmi ekle';$('artTitle').value=a?.title||'';$('artDesc').value=a?.description||'';$('artCategory').value=a?.category||'drawings';$('dateHint').textContent=a?`Eklenme tarihi: ${dateDisplay(a.createdAt)} (değişmez)`:`Eklenme tarihi: ${dateDisplay(new Date().toISOString())} (otomatik)`;updatePreview(a?.original||null);overlayOpen('editOverlay')}
+  function closeEdit(){overlayClose('editOverlay');releasePreview();incomingFile=null;editingId=null}
+  async function makeThumb(blob){try{const bmp=await createImageBitmap(blob);const ratio=bmp.width/bmp.height;const target=680;const scale=Math.min(1,target/Math.max(bmp.width,bmp.height));const can=document.createElement('canvas');can.width=Math.max(1,Math.round(bmp.width*scale));can.height=Math.max(1,Math.round(bmp.height*scale));const ctx=can.getContext('2d');ctx.fillStyle='#fff9ee';ctx.fillRect(0,0,can.width,can.height);ctx.drawImage(bmp,0,0,can.width,can.height);bmp.close();const thumb=await new Promise(r=>can.toBlob(r,'image/jpeg',.82));return {thumb:thumb||blob,ratio}}catch{return {thumb:blob,ratio:0.8}}}
+  async function saveArt(ev){ev.preventDefault();if(busy)return;const title=$('artTitle').value.trim(),description=$('artDesc').value.trim(),category=$('artCategory').value;if(!title){notify('Resmin adını yaz.');$('artTitle').focus();return}const old=editingId?artworks.find(a=>a.id===editingId):null;if(!old&&!incomingFile){notify('Önce bir görsel seç.');return}busy=true;$('saveBtn').disabled=true;$('saveLabel').textContent='Kaydediliyor…';try{let imageData={};if(incomingFile){imageData=await makeThumb(incomingFile);imageData.original=incomingFile;imageData.fileName=incomingFile.name;imageData.mime=incomingFile.type}const item={...(old||{}),...imageData,title,description,category,createdAt:old?.createdAt||new Date().toISOString(),archiveId:old?.archiveId||newKey()};if(old){await dbPut(item)}else{await dbAdd(item)}const wasDetail=!$('detailOverlay').hidden;const activeId=old?.id;closeEdit();await reload();if(wasDetail&&activeId)openDetail(activeId,true);notify(old?'Resim güncellendi.':'Resim eklendi.')}
+    catch(err){console.error(err);notify('Kaydedilemedi. Cihazdaki boş alanı ve tarayıcı izinlerini kontrol et.')}finally{busy=false;$('saveBtn').disabled=false;$('saveLabel').textContent=editingId?'Kaydet':'Resmi ekle'}}
+  function deleteSelected(){const a=artworks.find(x=>x.id===editingId);if(!a||mode!=='curator')return;$('deleteMessage').textContent=`“${a.title}” kalıcı olarak silinecek.`;overlayOpen('deleteOverlay')}
+  async function confirmDelete(){const a=artworks.find(x=>x.id===editingId);if(!a||busy||mode!=='curator')return;busy=true;$('confirmDelete').disabled=true;try{await dbDelete(a.id);favorites.delete(a.archiveId);saveFavorites();overlayClose('deleteOverlay');closeEdit();if(!$('detailOverlay').hidden)closeDetail();await reload();notify('Resim silindi.')}catch(err){console.error(err);notify('Resim silinemedi.')}finally{busy=false;$('confirmDelete').disabled=false}}
+    function revokeDetail(){if(detailURL){URL.revokeObjectURL(detailURL);detailURL=null}}
+  function openDetail(id,alreadyOpen=false){const a=artworks.find(x=>x.id===id);if(!a)return;currentId=id;revokeDetail();detailURL=URL.createObjectURL(a.original);$('detailImage').src=detailURL;$('detailImage').alt=a.title;$('detailTitle').textContent=a.title;$('detailCategory').textContent=categoryName(a.category);$('detailDesc').textContent=a.description||'';$('detailDesc').hidden=!a.description?.trim();$('detailDate').textContent=dateDisplay(a.createdAt);const index=visible.findIndex(x=>x.id===id);$('detailNumber').textContent=`RESİM ${String(Math.max(1,index+1)).padStart(3,'0')} / ${String(visible.length).padStart(3,'0')}`;$('prevArt').disabled=index<=0;$('nextArt').disabled=index<0||index>=visible.length-1;$('editFromDetail').hidden=mode!=='curator';updateFavoriteDetail(a);if(!alreadyOpen)overlayOpen('detailOverlay')}
+    function closeDetail(){overlayClose('detailOverlay');revokeDetail();$('detailImage').removeAttribute('src');currentId=null}
+  function navigate(delta){const i=visible.findIndex(x=>x.id===currentId);const dest=visible[i+delta];if(dest)openDetail(dest.id,true)}
+  function triggerDownload(blob,name){const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),15000)}
+  function downloadOriginal(){const a=artworks.find(x=>x.id===currentId);if(!a)return;const ext={'image/png':'.png','image/jpeg':'.jpg','image/webp':'.webp','image/gif':'.gif','image/avif':'.avif'}[a.mime]||'.jpg';const desired=fixName(a.title);triggerDownload(a.original,desired+(desired.toLowerCase().endsWith(ext)?'':ext))}
+  // Standalone ZIP writing, STORE (no compression) so originals are byte-for-byte unchanged.
+  const encoder=new TextEncoder(),decoder=new TextDecoder();
+  const crcTable=(()=>{const tab=new Uint32Array(256);for(let i=0;i<256;i++){let c=i;for(let j=0;j<8;j++)c=c&1?0xEDB88320^(c>>>1):c>>>1;tab[i]=c>>>0}return tab})();
+  function crc32(buffer){const bytes=new Uint8Array(buffer);let c=0xffffffff;for(let i=0;i<bytes.length;i++)c=crcTable[(c^bytes[i])&255]^(c>>>8);return(c^0xffffffff)>>>0}
+  function write16(v,n,x){v.setUint16(n,x,true)}function write32(v,n,x){v.setUint32(n,x,true)}
+  async function zipBuild(entries){const chunks=[],central=[];let offset=0;for(const entry of entries){const name=encoder.encode(entry.name);const buffer=await entry.blob.arrayBuffer();const size=buffer.byteLength;if(size>0xffffffff)throw Error('Dosya çok büyük.');const crc=crc32(buffer);const h=new Uint8Array(30+name.length),v=new DataView(h.buffer);write32(v,0,0x04034b50);write16(v,4,20);write16(v,6,0x0800);write16(v,8,0);write32(v,14,crc);write32(v,18,size);write32(v,22,size);write16(v,26,name.length);h.set(name,30);chunks.push(h,entry.blob);
+      const c=new Uint8Array(46+name.length),cv=new DataView(c.buffer);write32(cv,0,0x02014b50);write16(cv,4,20);write16(cv,6,20);write16(cv,8,0x0800);write32(cv,16,crc);write32(cv,20,size);write32(cv,24,size);write16(cv,28,name.length);write32(cv,42,offset);c.set(name,46);central.push(c);offset+=h.length+size;}
+    const centralSize=central.reduce((n,a)=>n+a.length,0);const e=new Uint8Array(22),v=new DataView(e.buffer);write32(v,0,0x06054b50);write16(v,8,entries.length);write16(v,10,entries.length);write32(v,12,centralSize);write32(v,16,offset);return new Blob([...chunks,...central,e],{type:'application/zip'})}
+  async function exportBackup(){if(busy)return;if(!artworks.length){notify('Yedeklenecek resim yok.');return}busy=true;$('exportBackup').disabled=true;$('exportBackup').textContent='Hazırlanıyor…';try{const files=[],manifest={format:'izler-gallery',version:1,exportedAt:new Date().toISOString(),works:[],favorites:[...favorites]};for(const a of artworks){const ext={'image/png':'.png','image/jpeg':'.jpg','image/webp':'.webp','image/gif':'.gif','image/avif':'.avif'}[a.mime]||'.bin';const path=`resimler/${a.archiveId}${ext}`;files.push({name:path,blob:a.original});manifest.works.push({archiveId:a.archiveId,title:a.title,description:a.description,category:a.category||'drawings',createdAt:a.createdAt,file:path,mime:a.mime})}files.unshift({name:'koleksiyon.json',blob:new Blob([JSON.stringify(manifest,null,2)],{type:'application/json'})});const zip=await zipBuild(files);triggerDownload(zip,`ada-galeri-yedek-${dateFile()}.zip`);notify(`${artworks.length} resim yedeklendi.`)}catch(err){console.error(err);notify('Yedek oluşturulamadı. Depolama alanını kontrol et.')}finally{busy=false;$('exportBackup').disabled=false;$('exportBackup').textContent='ZIP yedeği oluştur'}}
+  // Reads central directory to locate our uncompressed archives. No external libraries/network needed.
+  async function zipRead(file){const data=await file.arrayBuffer(),v=new DataView(data),limit=data.byteLength;let eocd=-1;for(let p=limit-22;p>=Math.max(0,limit-65557);p--){if(v.getUint32(p,true)===0x06054b50){eocd=p;break}}if(eocd<0)throw Error('Geçerli ZIP bulunamadı.');const count=v.getUint16(eocd+10,true);let pos=v.getUint32(eocd+16,true);if(count>1500)throw Error('Çok fazla dosya.');const files=new Map();for(let i=0;i<count;i++){if(pos+46>limit||v.getUint32(pos,true)!==0x02014b50)throw Error('ZIP bozuk.');const method=v.getUint16(pos+10,true),size=v.getUint32(pos+20,true),nlen=v.getUint16(pos+28,true),extra=v.getUint16(pos+30,true),comment=v.getUint16(pos+32,true),local=v.getUint32(pos+42,true);if(pos+46+nlen>limit||local+30>limit)throw Error('ZIP bozuk.');const name=decoder.decode(new Uint8Array(data,pos+46,nlen));if(method!==0)throw Error('Yalnızca bu uygulamanın oluşturduğu sıkıştırılmamış ZIP yedekleri desteklenir.');if(v.getUint32(local,true)!==0x04034b50)throw Error('ZIP bozuk.');const start=local+30+v.getUint16(local+26,true)+v.getUint16(local+28,true);if(start+size>limit)throw Error('ZIP bozuk.');files.set(name,file.slice(start,start+size));pos+=46+nlen+extra+comment}return files}
+  async function importBackup(file){if(!file||busy)return;busy=true;$('importBackupBtn').disabled=true;$('importBackupBtn').textContent='Geri yükleniyor…';try{const entries=await zipRead(file);if(!entries.has('koleksiyon.json'))throw Error('Geçersiz yedek dosyası.');const meta=JSON.parse(await entries.get('koleksiyon.json').text());if(meta.format!=='izler-gallery'||meta.version!==1||!Array.isArray(meta.works))throw Error('Yedek biçimi desteklenmiyor.');let added=0,skipped=0;const known=new Set(artworks.map(a=>a.archiveId));for(const work of meta.works){if(!work.archiveId||!work.title||!work.file||!entries.has(work.file))throw Error('Yedekte eksik resim bilgisi var.');if(known.has(work.archiveId)){skipped++;continue}const original=entries.get(work.file);const mime=allowedTypes.has(work.mime)?work.mime:'image/jpeg';const typed=original.slice(0,original.size,mime);const processed=await makeThumb(typed);await dbAdd({archiveId:work.archiveId,title:String(work.title).slice(0,100),description:String(work.description||'').slice(0,3000),category:work.category==='cats'?'cats':'drawings',createdAt:!isNaN(Date.parse(work.createdAt))?work.createdAt:new Date().toISOString(),original:typed,thumb:processed.thumb,ratio:processed.ratio,mime,fileName:work.file.split('/').pop()});known.add(work.archiveId);added++}if(Array.isArray(meta.favorites)){for(const id of meta.favorites)if(known.has(id))favorites.add(id);saveFavorites()}await reload();overlayClose('backupOverlay');notify(`${added} resim eklendi${skipped?', '+skipped+' zaten vardı':''}.`)}catch(err){console.error(err);notify('Yedek yüklenemedi: '+err.message)}finally{busy=false;$('importBackupBtn').disabled=false;$('importBackupBtn').textContent='ZIP dosyası seç';$('importBackupFile').value=''}}
+  function initEvents(){document.querySelectorAll('[data-enter]').forEach(btn=>btn.addEventListener('click',()=>setMode(btn.dataset.enter)));
+    $('switchMode').addEventListener('click',()=>{if(!$('detailOverlay').hidden)closeDetail();if(!$('editOverlay').hidden)closeEdit();$('entry').hidden=false;setLock()});
+    $('addOpen').addEventListener('click',()=>openEdit());$('emptyAdd').addEventListener('click',()=>openEdit());$('backupOpen').addEventListener('click',()=>overlayOpen('backupOverlay'));
+    $('search').addEventListener('input',render);$('sort').addEventListener('change',render);document.querySelectorAll('[data-tab]').forEach(btn=>btn.addEventListener('click',()=>{activeTab=btn.dataset.tab;render()}));document.querySelectorAll('[data-category]').forEach(btn=>btn.addEventListener('click',()=>{activeCategory=btn.dataset.category;render()}));
+    $('editClose').addEventListener('click',closeEdit);$('artForm').addEventListener('submit',saveArt);$('deleteArt').addEventListener('click',deleteSelected);
+    $('dropzone').addEventListener('click',()=>$('artFile').click());$('dropzone').addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();$('artFile').click()}});$('artFile').addEventListener('change',ev=>assignFile(ev.target.files[0]));
+    ['dragenter','dragover'].forEach(type=>$('dropzone').addEventListener(type,ev=>{ev.preventDefault();$('dropzone').classList.add('dragging')}));['dragleave','drop'].forEach(type=>$('dropzone').addEventListener(type,ev=>{ev.preventDefault();$('dropzone').classList.remove('dragging')}));$('dropzone').addEventListener('drop',ev=>assignFile(ev.dataTransfer.files[0]));
+    $('detailClose').addEventListener('click',closeDetail);$('prevArt').addEventListener('click',()=>navigate(-1));$('nextArt').addEventListener('click',()=>navigate(1));$('editFromDetail').addEventListener('click',()=>openEdit(currentId));$('downloadOriginal').addEventListener('click',downloadOriginal);$('detailFavorite').addEventListener('click',()=>{const a=artworks.find(x=>x.id===currentId);if(a)toggleFavorite(a.archiveId)});
+    $('cancelDelete').addEventListener('click',()=>overlayClose('deleteOverlay'));$('confirmDelete').addEventListener('click',confirmDelete);$('backupClose').addEventListener('click',()=>overlayClose('backupOverlay'));$('exportBackup').addEventListener('click',exportBackup);$('importBackupBtn').addEventListener('click',()=>$('importBackupFile').click());$('importBackupFile').addEventListener('change',ev=>importBackup(ev.target.files[0]));
+    ['editOverlay','detailOverlay','backupOverlay','deleteOverlay'].forEach(id=>$(id).addEventListener('mousedown',ev=>{if(ev.target===$(id)){if(id==='editOverlay')closeEdit();else if(id==='detailOverlay')closeDetail();else overlayClose(id)}}));
+    document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){if(!$('deleteOverlay').hidden)overlayClose('deleteOverlay');else if(!$('editOverlay').hidden)closeEdit();else if(!$('backupOverlay').hidden)overlayClose('backupOverlay');else if(!$('detailOverlay').hidden)closeDetail()}else if(!$('detailOverlay').hidden&&$('editOverlay').hidden){if(ev.key==='ArrowRight')navigate(1);if(ev.key==='ArrowLeft')navigate(-1)}});
+    let touchX=null;const vis=$('detailVisual');vis.addEventListener('touchstart',ev=>{if(ev.touches.length===1)touchX=ev.touches[0].clientX},{passive:true});vis.addEventListener('touchend',ev=>{if(touchX===null)return;const dx=ev.changedTouches[0].clientX-touchX;touchX=null;if(Math.abs(dx)>70)navigate(dx<0?1:-1)},{passive:true});
+  }
+  async function init(){initEvents();try{if(!('indexedDB' in window))throw Error('Tarayıcı yerel depolamayı desteklemiyor.');db=await openDb();artworks=await dbGetAll();try{if(navigator.storage?.persist)navigator.storage.persist()}catch{}try{const savedF=JSON.parse(localStorage.getItem(FAVORITES_KEY)||'[]');favorites=new Set(Array.isArray(savedF)?savedF.filter(x=>typeof x==='string'):[])}catch{favorites=new Set()}render();const saved=(()=>{try{return localStorage.getItem(ROLE_KEY)||sessionStorage.getItem('izler-mode')}catch{return null}})();if(saved==='viewer'||saved==='curator')setMode(saved);else{$('entry').hidden=false;setLock()}}
+    catch(err){console.error(err);$('entry').hidden=false;setLock();notify('Depolama açılamadı. Gizli sekme yerine normal tarayıcıda dene.')}}
+  // Local-only v1 startup is deliberately disabled. app.js uses Supabase while retaining this code
+  // solely to read an existing IndexedDB collection during one-time migration.
+  </script>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
