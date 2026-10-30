@@ -34,9 +34,14 @@
     .brand-text{font-family:var(--serif);font-weight:600;font-size:30px;letter-spacing:-1.6px;line-height:1}.brand-caption{font-size:9px;letter-spacing:.15px;opacity:.72;font-weight:600;line-height:1.4;margin-left:1px;max-width:126px}
     .header-note{font-size:10px;letter-spacing:2.1px;text-transform:uppercase;color:var(--sub);margin-left:10px;white-space:nowrap}
     .header-spacer{flex:1}
-    .header-actions{display:flex;gap:8px;align-items:center}
+    .header-actions{display:flex;gap:8px;align-items:center;position:relative}
     .mode-btn,.icon-btn,.small-outline{background:none;color:var(--wine);border:1px solid var(--border);border-radius:100px;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:0 14px;font-size:12px;font-weight:700;white-space:nowrap;transition:background .2s,transform .2s}
     .mode-btn:hover,.icon-btn:hover,.small-outline:hover{background:rgba(100,13,20,.055)}
+    .mode-picker{position:absolute;right:0;top:calc(100% + 12px);z-index:30;width:212px;background:var(--paper);color:var(--wine);border:1px solid var(--border);border-radius:12px;padding:8px;box-shadow:0 14px 40px rgba(57,11,16,.19)}
+    .mode-option{display:flex;align-items:center;gap:11px;width:100%;min-height:49px;padding:10px 12px;text-align:left;background:transparent;border:0;border-radius:8px;color:var(--wine);font-size:13px;font-weight:700}
+    .mode-option:hover,.mode-option:focus-visible{background:rgba(100,13,20,.08)}
+    .mode-option .svg-icon{width:19px;height:19px}
+    #switchMode[aria-expanded="true"]{background:var(--wine);color:var(--cream)}
     .mode-btn .svg-icon{width:17px;height:17px}
     .icon-btn{width:42px;padding:0}
     .primary-btn{border:0;border-radius:100px;background:var(--wine);color:var(--cream);display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 21px;font-size:12px;font-weight:700;letter-spacing:.1px;min-height:44px;transition:transform .2s,background .2s,box-shadow .2s}
@@ -242,7 +247,11 @@
       
       <div class="header-spacer"></div>
       <div class="header-actions">
-        <button class="mode-btn" id="switchMode" title="Mod değiştir"><svg class="svg-icon"><use href="#i-eye"/></svg><span id="modeLabel">İzleyici</span></button>
+        <button type="button" class="mode-btn" id="switchMode" title="Mod değiştir" aria-label="Mod değiştir" aria-haspopup="true" aria-controls="modePicker" aria-expanded="false" onclick="const menu=document.getElementById('modePicker');menu.hidden=!menu.hidden;this.setAttribute('aria-expanded',String(!menu.hidden));"><svg class="svg-icon"><use href="#i-eye"/></svg><span id="modeLabel">İzleyici</span></button>
+        <div class="mode-picker" id="modePicker" hidden role="group" aria-label="Mod seç">
+          <button type="button" class="mode-option" data-mode-option="viewer"><svg class="svg-icon"><use href="#i-eye"/></svg>İzleyici</button>
+          <button type="button" class="mode-option" data-mode-option="curator"><svg class="svg-icon"><use href="#i-pencil"/></svg>Ekleyici</button>
+        </div>
         <button class="icon-btn" id="backupOpen" title="Yedekleme ve geri yükleme" aria-label="Yedekleme ve geri yükleme" hidden><svg class="svg-icon"><use href="#i-box"/></svg></button>
         <button class="primary-btn" id="addOpen" hidden><svg class="svg-icon"><use href="#i-plus"/></svg><span>Resim ekle</span></button>
       </div>
@@ -371,6 +380,6 @@
   // Local-only v1 startup is deliberately disabled. app.js uses Supabase while retaining this code
   // solely to read an existing IndexedDB collection during one-time migration.
   </script>
-  <script type="module" src="./app.js"></script>
+  <script type="module" src="./app.js?v=mode-picker-20261031"></script>
 </body>
 </html>
