@@ -13,16 +13,6 @@ GitHub Pages üzerinde çalışan, Supabase `Hmm` projesindeki `public.gallery_a
 - Favoriler yalnızca o cihazın tarayıcısında tutulur.
 - Orijinal dosya ve küçük önizleme ayrı saklanır; eklenme tarihi veritabanında otomatik oluşturulur.
 
-## Proje yapılandırması
-
-- Supabase Project ID: `kjnyzxqdayipxmucgeot` (Hmm)
-- Frontend bağlantı ayarları: `supabase-config.js` (yalnızca publishable key)
-- Aktif veritabanı migration'ı: `ada_gallery_open_modes_v1`
-- Mevcut `supabase/migrations/20261031_initial_gallery.sql` dosyası **eski admin-only tasarımına aittir ve mevcut kurulumun üstünde tekrar uygulanmamalıdır**.
-- GitHub Pages, `main` branch üzerindeki dağıtım iş akışından yayınlanır.
-
-## Güvenlik notu
-
-**Önemli: Galeri herkese açık ve yazılabilirdir.** Site bağlantısını bilen herkes Ekleyici moduyla fotoğraf ekleyebilir, değiştirebilir ve silebilir. İzleyici/Ekleyici ayrımı sadece arayüz tercihidir, güvenlik sınırı değildir. Kötüye kullanım olasılığı vardır. Fotoğrafları başka bir yerde düzenli yedekleyin. İleride yalnızca seçili kişilerin eklemesini istiyorsanız Supabase Auth ve kullanıcıya özel RLS kuralları gerekecektir.
+Sağ üstteki mod düğmesi seçim ekranını her zaman yeniden açar ve seçilen mod sayfa yenilendikten sonra korunur. İzleyici/Ekleyici ayrımı güvenlik sınırı değildir: bağlantıyı bilen herkes Ekleyici modunda ortak galeriyi değiştirebilir.
 
 Mevcut `Hmm` projesindeki diğer tablolar korunmuştur.

@@ -60,17 +60,20 @@ alter table public.gallery_assets enable row level security;
 
 grant usage on schema public to anon, authenticated;
 grant select on public.gallery_assets to anon, authenticated;
-grant insert, update, delete on public.gallery_assets to authenticated;
+grant insert, update, delete on public.gallery_assets to anon, authenticated;
 
--- The gallery is intentionally public-to-read. Do not expose the admin allowlist.
+-- The requested gallery is intentionally shared: anyone can curate after choosing Ekleyici.
 drop policy if exists "public may read gallery" on public.gallery_assets;
 create policy "public may read gallery" on public.gallery_assets for select using (true);
 drop policy if exists "admins insert gallery" on public.gallery_assets;
-create policy "admins insert gallery" on public.gallery_assets for insert to authenticated with check (public.is_gallery_admin());
+drop policy if exists "public may insert gallery" on public.gallery_assets;
+create policy "public may insert gallery" on public.gallery_assets for insert with check (true);
 drop policy if exists "admins update gallery" on public.gallery_assets;
-create policy "admins update gallery" on public.gallery_assets for update to authenticated using (public.is_gallery_admin()) with check (public.is_gallery_admin());
+drop policy if exists "public may update gallery" on public.gallery_assets;
+create policy "public may update gallery" on public.gallery_assets for update using (true) with check (true);
 drop policy if exists "admins delete gallery" on public.gallery_assets;
-create policy "admins delete gallery" on public.gallery_assets for delete to authenticated using (public.is_gallery_admin());
+drop policy if exists "public may delete gallery" on public.gallery_assets;
+create policy "public may delete gallery" on public.gallery_assets for delete using (true);
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('gallery-assets', 'gallery-assets', false, 73400320,
@@ -85,13 +88,16 @@ drop policy if exists "public may read gallery files" on storage.objects;
 create policy "public may read gallery files" on storage.objects for select
 using (bucket_id = 'gallery-assets');
 drop policy if exists "admins upload gallery files" on storage.objects;
-create policy "admins upload gallery files" on storage.objects for insert to authenticated
-with check (bucket_id = 'gallery-assets' and public.is_gallery_admin());
+drop policy if exists "public may upload gallery files" on storage.objects;
+create policy "public may upload gallery files" on storage.objects for insert
+with check (bucket_id = 'gallery-assets');
 drop policy if exists "admins update gallery files" on storage.objects;
-create policy "admins update gallery files" on storage.objects for update to authenticated
-using (bucket_id = 'gallery-assets' and public.is_gallery_admin())
-with check (bucket_id = 'gallery-assets' and public.is_gallery_admin());
+drop policy if exists "public may update gallery files" on storage.objects;
+create policy "public may update gallery files" on storage.objects for update
+using (bucket_id = 'gallery-assets')
+with check (bucket_id = 'gallery-assets');
 drop policy if exists "admins delete gallery files" on storage.objects;
-create policy "admins delete gallery files" on storage.objects for delete to authenticated
-using (bucket_id = 'gallery-assets' and public.is_gallery_admin());
+drop policy if exists "public may delete gallery files" on storage.objects;
+create policy "public may delete gallery files" on storage.objects for delete
+using (bucket_id = 'gallery-assets');
 

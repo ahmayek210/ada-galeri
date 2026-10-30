@@ -72,13 +72,10 @@ function render() {
   gallery.append(fragment);
 }
 
-
 function setMode(next) {
   mode = next; try { localStorage.setItem(ROLE_KEY, next); } catch {}
   $('entry').hidden = true; $('switchMode').innerHTML = icon(mode === 'curator' ? 'pencil' : 'eye') + `<span>${mode === 'curator' ? 'Ekleyici' : 'İzleyici'}</span>`;
-  const editorUI = mode === 'curator'; $('addOpen').hidden = !editorUI; $('backupOpen').hidden = !editorUI; $('editFromDetail').hidden = !editorUI; $('signOut').hidden = true;
-  const picker = $('modePicker'); if (picker) picker.hidden = true; $('switchMode').setAttribute('aria-expanded', 'false');
-  render(); lock(); window.scrollTo({top:0, behavior:'auto'});
+  const curatorUI = mode === 'curator'; $('addOpen').hidden = !curatorUI; $('backupOpen').hidden = !curatorUI; $('editFromDetail').hidden = !curatorUI; $('signOut').hidden = true; render(); lock(); window.scrollTo({top:0, behavior:'auto'});
 }
 function chooseMode(next) { setMode(next); }
 function updateDetailFavorite() { const art = artworks.find(a => a.id === currentId); if (!art) return; const saved = favorites.has(art.archiveId); $('detailFavorite').classList.toggle('active', saved); $('detailFavoriteLabel').textContent = saved ? 'Favorilerden çıkar' : 'Favoriye ekle'; }
@@ -91,7 +88,7 @@ function setPreview(fileOrUrl) { releasePreview(); const image = $('imagePreview
 async function verifyImage(file) { if (!TYPES.has(file.type)) throw new Error('JPG, PNG, WEBP, GIF veya AVIF görsel seç.'); if (file.size > MAX_BYTES) throw new Error('Dosya 70 MB sınırını aşıyor.'); try { const bitmap = await createImageBitmap(file); bitmap.close(); } catch { throw new Error('Dosya geçerli bir görsel olarak okunamadı.'); } }
 async function makeThumb(file) { try { const bitmap = await createImageBitmap(file); const ratio = bitmap.width / bitmap.height; const scale = Math.min(1, 680 / Math.max(bitmap.width, bitmap.height)); const canvas = document.createElement('canvas'); canvas.width = Math.max(1, Math.round(bitmap.width * scale)); canvas.height = Math.max(1, Math.round(bitmap.height * scale)); canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height); bitmap.close(); const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', .82)); return { blob: blob || file, ratio }; } catch { return {blob:file, ratio:.8}; } }
 async function assignFile(file) { if (!file) return; try { await verifyImage(file); incomingFile = file; setPreview(file); if (!editingId && !$('artTitle').value.trim()) $('artTitle').value = file.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ').slice(0,100); } catch (error) { notify(error.message); } }
-function openEdit(id = null) { if (mode !== 'curator') return chooseMode('curator'); editingId = id; incomingFile = null; $('artForm').reset(); const art = id && artworks.find(a => a.id === id); $('editKicker').textContent = art ? 'RESMİ DÜZENLE' : 'RESİM EKLE'; $('editTitle').textContent = art ? 'Resmi düzenle' : 'Yeni resim'; $('deleteArt').hidden = !art; $('saveLabel').textContent = art ? 'Kaydet' : 'Resmi ekle'; $('artTitle').value = art?.title || ''; $('artDesc').value = art?.description || ''; $('artCategory').value = art?.category || 'drawings'; $('dateHint').textContent = art ? `Eklenme tarihi: ${dateText(art.createdAt)} (değişmez)` : 'Eklenme tarihi sunucuda otomatik kaydedilir.'; setPreview(art?.originalUrl || null); show('editOverlay'); }
+function openEdit(id = null) { if (mode !== 'curator') return; editingId = id; incomingFile = null; $('artForm').reset(); const art = id && artworks.find(a => a.id === id); $('editKicker').textContent = art ? 'RESMİ DÜZENLE' : 'RESİM EKLE'; $('editTitle').textContent = art ? 'Resmi düzenle' : 'Yeni resim'; $('deleteArt').hidden = !art; $('saveLabel').textContent = art ? 'Kaydet' : 'Resmi ekle'; $('artTitle').value = art?.title || ''; $('artDesc').value = art?.description || ''; $('artCategory').value = art?.category || 'drawings'; $('dateHint').textContent = art ? `Eklenme tarihi: ${dateText(art.createdAt)} (değişmez)` : 'Eklenme tarihi sunucuda otomatik kaydedilir.'; setPreview(art?.originalUrl || null); show('editOverlay'); }
 function closeEdit() { hide('editOverlay'); releasePreview(); incomingFile = null; editingId = null; }
 function requireEditor() { if (mode !== 'curator') throw new Error('Önce Ekleyici moduna geç.'); }
 async function uploadFile(path, file, options = {}) { const { error } = await client.storage.from(BUCKET).upload(path, file, {cacheControl:'31536000', upsert:false, contentType:file.type, ...options}); if (error) throw error; }
@@ -122,21 +119,12 @@ async function migrateLocal() { busy=true;$('migrateLocalBtn').disabled=true;$('
 
 function events() {
   document.querySelectorAll('[data-enter]').forEach(button=>button.addEventListener('click',()=>chooseMode(button.dataset.enter)));
-  document.querySelectorAll('[data-mode-option]').forEach(button => button.addEventListener('click', () => chooseMode(button.dataset.modeOption)));
-  document.addEventListener('click', event => {
-    const picker = $('modePicker'), switcher = $('switchMode');
-    if (picker && !picker.hidden && !picker.contains(event.target) && !switcher.contains(event.target)) {
-      picker.hidden = true; switcher.setAttribute('aria-expanded', 'false');
-    }
-  });
-  $('switchMode').addEventListener('keydown', event => {
-    if (event.key === 'Escape') { $('modePicker').hidden = true; $('switchMode').setAttribute('aria-expanded', 'false'); }
-  });
+  $('switchMode').onclick=()=>{$('entry').hidden=false;lock();};$('authClose').onclick=()=>hide('authOverlay');
   $('addOpen').onclick=()=>openEdit();$('emptyAdd').onclick=()=>openEdit();$('retryLoad').onclick=async()=>{try{await reload();}catch(error){notify('Yeniden deneme başarısız: '+error.message);}};$('backupOpen').onclick=()=>show('backupOverlay');$('backupClose').onclick=()=>hide('backupOverlay');$('editClose').onclick=closeEdit;$('detailClose').onclick=closeDetail;$('cancelDelete').onclick=()=>hide('deleteOverlay');$('confirmDelete').onclick=confirmDelete;$('deleteArt').onclick=askDelete;$('artForm').onsubmit=saveArt;$('exportBackup').onclick=exportBackup;$('importBackupBtn').onclick=()=>$('importBackupFile').click();$('importBackupFile').onchange=event=>importBackup(event.target.files[0]);$('migrateLocalBtn').onclick=migrateLocal;
   $('search').oninput=render;$('sort').onchange=render;document.querySelectorAll('[data-tab]').forEach(node=>node.onclick=()=>{activeTab=node.dataset.tab;render();});document.querySelectorAll('[data-category]').forEach(node=>node.onclick=()=>{activeCategory=node.dataset.category;render();});
   $('dropzone').onclick=()=>$('artFile').click();$('dropzone').onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();$('artFile').click();}};$('artFile').onchange=event=>assignFile(event.target.files[0]);['dragenter','dragover'].forEach(type=>$('dropzone').addEventListener(type,event=>{event.preventDefault();$('dropzone').classList.add('dragging');}));['dragleave','drop'].forEach(type=>$('dropzone').addEventListener(type,event=>{event.preventDefault();$('dropzone').classList.remove('dragging');}));$('dropzone').addEventListener('drop',event=>assignFile(event.dataTransfer.files[0]));
   $('prevArt').onclick=()=>navigate(-1);$('nextArt').onclick=()=>navigate(1);$('editFromDetail').onclick=()=>openEdit(currentId);$('detailFavorite').onclick=()=>{const art=artworks.find(a=>a.id===currentId);if(art)toggleFavorite(art.archiveId);};$('downloadOriginal').onclick=downloadOriginal;document.addEventListener('keydown',event=>{if(event.key==='Escape')['authOverlay','deleteOverlay','editOverlay','backupOverlay','detailOverlay'].find(id=>!$(id).hidden) && hide(['authOverlay','deleteOverlay','editOverlay','backupOverlay','detailOverlay'].find(id=>!$(id).hidden));else if(!$('detailOverlay').hidden&&event.key==='ArrowRight')navigate(1);else if(!$('detailOverlay').hidden&&event.key==='ArrowLeft')navigate(-1);});
 }
-async function init() { events(); try { favorites=new Set(JSON.parse(localStorage.getItem(FAVORITES_KEY)||'[]')); } catch {} if (!configured()) { render(); $('entry').hidden=false;lock();return; } if (!window.supabase) throw Error('Supabase kitaplığı yüklenemedi.'); client=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}); await reload(); const saved=localStorage.getItem(ROLE_KEY); if(saved==='curator'||saved==='viewer')setMode(saved);else{$('entry').hidden=false;lock();}  } catch(error) { console.error(error);render();$('entry').hidden=false;lock();notify('Galeri yüklenemedi: '+(error.message||'bağlantı hatası'));} }
+async function init() { events(); try { favorites=new Set(JSON.parse(localStorage.getItem(FAVORITES_KEY)||'[]')); } catch {} const saved=localStorage.getItem(ROLE_KEY); if(saved==='curator'||saved==='viewer')setMode(saved);else{$('entry').hidden=false;lock();} if (!configured()) { render(); return; } try { const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'); client=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}); await reload(); } catch(error) { console.error(error);render();notify('Galeri yüklenemedi: '+(error.message||'bağlantı hatası'));} }
 init();
 
