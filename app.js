@@ -76,7 +76,9 @@ function render() {
 function setMode(next) {
   mode = next; try { localStorage.setItem(ROLE_KEY, next); } catch {}
   $('entry').hidden = true; $('switchMode').innerHTML = icon(mode === 'curator' ? 'pencil' : 'eye') + `<span>${mode === 'curator' ? 'Ekleyici' : 'İzleyici'}</span>`;
-  const editorUI = mode === 'curator'; $('addOpen').hidden = !editorUI; $('backupOpen').hidden = !editorUI; $('editFromDetail').hidden = !editorUI; $('signOut').hidden = true; render(); lock(); window.scrollTo({top:0, behavior:'auto'});
+  const editorUI = mode === 'curator'; $('addOpen').hidden = !editorUI; $('backupOpen').hidden = !editorUI; $('editFromDetail').hidden = !editorUI; $('signOut').hidden = true;
+  const picker = $('modePicker'); if (picker) picker.hidden = true; $('switchMode').setAttribute('aria-expanded', 'false');
+  render(); lock(); window.scrollTo({top:0, behavior:'auto'});
 }
 function chooseMode(next) { setMode(next); }
 function updateDetailFavorite() { const art = artworks.find(a => a.id === currentId); if (!art) return; const saved = favorites.has(art.archiveId); $('detailFavorite').classList.toggle('active', saved); $('detailFavoriteLabel').textContent = saved ? 'Favorilerden çıkar' : 'Favoriye ekle'; }
@@ -120,7 +122,16 @@ async function migrateLocal() { busy=true;$('migrateLocalBtn').disabled=true;$('
 
 function events() {
   document.querySelectorAll('[data-enter]').forEach(button=>button.addEventListener('click',()=>chooseMode(button.dataset.enter)));
-  $('switchMode').onclick=()=>{$('entry').hidden=false;lock();};
+  document.querySelectorAll('[data-mode-option]').forEach(button => button.addEventListener('click', () => chooseMode(button.dataset.modeOption)));
+  document.addEventListener('click', event => {
+    const picker = $('modePicker'), switcher = $('switchMode');
+    if (picker && !picker.hidden && !picker.contains(event.target) && !switcher.contains(event.target)) {
+      picker.hidden = true; switcher.setAttribute('aria-expanded', 'false');
+    }
+  });
+  $('switchMode').addEventListener('keydown', event => {
+    if (event.key === 'Escape') { $('modePicker').hidden = true; $('switchMode').setAttribute('aria-expanded', 'false'); }
+  });
   $('addOpen').onclick=()=>openEdit();$('emptyAdd').onclick=()=>openEdit();$('retryLoad').onclick=async()=>{try{await reload();}catch(error){notify('Yeniden deneme başarısız: '+error.message);}};$('backupOpen').onclick=()=>show('backupOverlay');$('backupClose').onclick=()=>hide('backupOverlay');$('editClose').onclick=closeEdit;$('detailClose').onclick=closeDetail;$('cancelDelete').onclick=()=>hide('deleteOverlay');$('confirmDelete').onclick=confirmDelete;$('deleteArt').onclick=askDelete;$('artForm').onsubmit=saveArt;$('exportBackup').onclick=exportBackup;$('importBackupBtn').onclick=()=>$('importBackupFile').click();$('importBackupFile').onchange=event=>importBackup(event.target.files[0]);$('migrateLocalBtn').onclick=migrateLocal;
   $('search').oninput=render;$('sort').onchange=render;document.querySelectorAll('[data-tab]').forEach(node=>node.onclick=()=>{activeTab=node.dataset.tab;render();});document.querySelectorAll('[data-category]').forEach(node=>node.onclick=()=>{activeCategory=node.dataset.category;render();});
   $('dropzone').onclick=()=>$('artFile').click();$('dropzone').onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();$('artFile').click();}};$('artFile').onchange=event=>assignFile(event.target.files[0]);['dragenter','dragover'].forEach(type=>$('dropzone').addEventListener(type,event=>{event.preventDefault();$('dropzone').classList.add('dragging');}));['dragleave','drop'].forEach(type=>$('dropzone').addEventListener(type,event=>{event.preventDefault();$('dropzone').classList.remove('dragging');}));$('dropzone').addEventListener('drop',event=>assignFile(event.dataTransfer.files[0]));
