@@ -1,35 +1,28 @@
 # Ada Galerisi
 
-Tek dosyalı tasarım korunarak GitHub Pages üzerinde çalışan Supabase ortak galeri sürümü.
+Canlı site: https://ahmayek210.github.io/ada-galeri/
 
-## Kurulum
-
-1. Supabase'de yeni bir proje oluşturun. **Authentication → Providers → Email** sağlayıcısını açın. Geliştirme için e-posta onayını kapatabilir veya yönettiğiniz kullanıcıyı doğrulayabilirsiniz.
-2. SQL Editor'da [`supabase/migrations/20261031_initial_gallery.sql`](supabase/migrations/20261031_initial_gallery.sql) dosyasının tamamını çalıştırın.
-3. **Authentication → Users** içinden ekleyici olacak kişiye ait hesabı oluşturun. SQL Editor'da o hesabı allowlist'e ekleyin:
-
-   ```sql
-   insert into public.gallery_admins (user_id)
-   select id from auth.users where email = 'admin@example.com';
-   ```
-
-4. **Project Settings → API** bölümündeki Project URL ve publishable (veya legacy anon) key'i [`supabase-config.js`](supabase-config.js) içindeki iki değere yazın. Bu anahtarın GitHub'a konması normaldir; `service_role`/secret anahtarını hiçbir zaman eklemeyin.
-5. Bu klasörün içeriğini bir GitHub deposunun köküne koyun, commit/push edin. GitHub **Settings → Pages** altında `Deploy from a branch`, ilgili branch ve `/(root)` seçin. Giriş dosyası `index.html` olduğundan proje alt yolu ayrıca yapılandırılmaz.
+GitHub Pages üzerinde çalışan, Supabase `Hmm` projesindeki `public.gallery_assets` ve `gallery-assets` Storage alanını kullanan ortak galeri.
 
 ## Kullanım
 
-- Ziyaretçi ilk açılışta **İzleyici** seçer; ortak galeri anon olarak okunur.
-- **Ekleyici** seçilince giriş formu açılır. Ancak `gallery_admins` tablosundaki kullanıcılar ekleme, düzenleme, yedek geri yükleme ve silme yapabilir.
-- Oturum Supabase tarafından tarayıcıda kalıcı tutulur. Ekleyici modundayken mod düğmesiyle çıkış yapılabilir.
-- Favoriler sadece cihazdaki `localStorage` içinde tutulur.
-- ZIP dışa aktarma buluttaki orijinalleri indirir. İçeri aktarma v1 ZIP biçimini kabul eder; eski yedeklerde kategori yoksa `drawings` kullanılır.
-- Eski IndexedDB koleksiyonu için Ekleyici → kutu simgesi → **Bu cihazdakileri buluta aktar** seçeneğini kullanın. Önce ZIP yedeği alın. Her `archive_id` tekil olduğundan aynı öğe yeniden taşınmaz.
+- İlk girişte **İzleyici** veya **Ekleyici** seçilir. E-posta, parola veya admin hesabı istenmez.
+- **İzleyici** fotoğrafları görüntüler, kategori filtreler, favorilere ekler ve indirebilir.
+- **Ekleyici** aynı ortak galeride resim ekler, günceller, siler ve yedekleme/aktarma yapar.
+- Fotoğraflar Supabase Storage'da, metadata PostgreSQL'de tutulur. Değişiklikler diğer cihazlarda sayfa yenilendiğinde görünür.
+- Favoriler yalnızca o cihazın tarayıcısında tutulur.
+- Orijinal dosya ve küçük önizleme ayrı saklanır; eklenme tarihi veritabanında otomatik oluşturulur.
+
+## Proje yapılandırması
+
+- Supabase Project ID: `kjnyzxqdayipxmucgeot` (Hmm)
+- Frontend bağlantı ayarları: `supabase-config.js` (yalnızca publishable key)
+- Aktif veritabanı migration'ı: `ada_gallery_open_modes_v1`
+- Mevcut `supabase/migrations/20261031_initial_gallery.sql` dosyası **eski admin-only tasarımına aittir ve mevcut kurulumun üstünde tekrar uygulanmamalıdır**.
+- GitHub Pages, `main` branch üzerindeki dağıtım iş akışından yayınlanır.
 
 ## Güvenlik notu
 
-Arayüzdeki İzleyici/Ekleyici seçimi yalnızca deneyimi belirler. Yetki, RLS ve `public.is_gallery_admin()` tarafından veritabanı ile Storage'da ayrı ayrı uygulanır. Bucket private'dır; yine de ziyaretçi okuma policy'si nedeniyle resimler bağlantıyı bilen herkese görünür. Özel galeriye geçmek için public `SELECT` policy'lerini kaldırıp erişim kuralı ekleyin.
+**Önemli: Galeri herkese açık ve yazılabilirdir.** Site bağlantısını bilen herkes Ekleyici moduyla fotoğraf ekleyebilir, değiştirebilir ve silebilir. İzleyici/Ekleyici ayrımı sadece arayüz tercihidir, güvenlik sınırı değildir. Kötüye kullanım olasılığı vardır. Fotoğrafları başka bir yerde düzenli yedekleyin. İleride yalnızca seçili kişilerin eklemesini istiyorsanız Supabase Auth ve kullanıcıya özel RLS kuralları gerekecektir.
 
-## Test
-
-Manuel kontroller için [`TEST_SCENARIOS.md`](TEST_SCENARIOS.md) dosyasını izleyin.
-
+Mevcut `Hmm` projesindeki diğer tablolar korunmuştur.
